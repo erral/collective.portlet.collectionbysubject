@@ -101,7 +101,7 @@ class Assignment(base.Assignment):
             return _(u'Collection By Subject')
 
 def render_cachekey(method, self):
-   return time() // (int(self.data.cache_duration) * 60)
+    return time() // (int(self.data.cache_duration) * 60)
 
 
 class Renderer(CollectionRenderer):
