@@ -1,5 +1,3 @@
-
-
 from time import time
 
 from zope import schema
@@ -24,14 +22,12 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from collective.portlet.collectionbysubject import CollectionBySubjectMessageFactory as _
 
-
-
 SUBJECT_TO_INDEX = {
     'Keywords':         'Subject',
     'Author':           'Creator',
     'Location':         'location',
-    'Type':             'Type',}
-
+    'Type':             'Type',
+    }
 
 
 class ICollectionBySubject(IPortletDataProvider):
@@ -62,8 +58,7 @@ class ICollectionBySubject(IPortletDataProvider):
         title=_(u"Group by"),
         description=_(u"Select subject you wish to group collection results by."),
         required=True,
-        values = SUBJECT_TO_INDEX.keys(),)
-
+        values= SUBJECT_TO_INDEX.keys(),)
 
     count_all_items = schema.Bool(
         title=_(u'Do not use the item count limit set on the collection'),
@@ -87,8 +82,8 @@ class Assignment(base.Assignment):
     implements(ICollectionBySubject)
 
     header = u""
-    target_collection=None
-    group_by=u"Keywords"
+    target_collection = None
+    group_by = u"Keywords"
     count_all_items = False
 
     def __init__(self, header=u"", target_collection=None,
@@ -109,6 +104,7 @@ class Assignment(base.Assignment):
             return self.header
         else:
             return _(u'Collection By Subject')
+
 
 def render_cachekey(method, self):
     return time() // (int(self.data.cache_duration) * 60)
@@ -201,6 +197,7 @@ class Renderer(CollectionRenderer):
         portal = portal_state.portal()
         return portal.restrictedTraverse(collection_path, default=None)
 
+
 class AddForm(base.AddForm):
     """Portlet add form.
 
@@ -231,5 +228,4 @@ class EditForm(base.EditForm):
     label = _(u"Add Collection by subject Portlet")
     description = _(u"This portlet display a listing of items from a Collection "
                      "that are grouped by selected subject.")
-
 
