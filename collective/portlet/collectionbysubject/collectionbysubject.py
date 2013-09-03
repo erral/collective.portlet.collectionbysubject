@@ -11,6 +11,7 @@ from zope.schema.interfaces import ISource, IContextSourceBinder
 from plone.memoize import ram
 from plone.memoize.instance import memoize
 from plone.memoize.compress import xhtml_compress
+from plone.app.collection.interfaces import ICollection
 from plone.app.portlets.portlets import base
 from plone.app.vocabularies.catalog import SearchableTextSourceBinder
 from plone.app.form.widgets.uberselectionwidget import UberSelectionWidget
@@ -51,7 +52,10 @@ class ICollectionBySubject(IPortletDataProvider):
         description=_(u"Find the collection which provides the items to list"),
         required=True,
         source=SearchableTextSourceBinder(
-            {'object_provides' : IATTopic.__identifier__},
+            {'object_provides': [
+            IATTopic.__identifier__,
+            ICollection.__identifier__,
+            ]},
             default_query='path:'))
 
     group_by = schema.Choice(
@@ -109,7 +113,7 @@ class Renderer(CollectionRenderer):
     """
 
     _template = ViewPageTemplateFile('collectionbysubject.pt')
-   
+
     def header_url(self):
         collection = self.collection(self.data.target_collection)
         if collection is None:
@@ -120,7 +124,7 @@ class Renderer(CollectionRenderer):
     def header_title(self):
         if self.data.header:
             return self.data.header
-        
+
         collection = self.collection(self.data.target_collection)
         if collection is None:
             return None
@@ -133,9 +137,9 @@ class Renderer(CollectionRenderer):
             return xhtml_compress(self._template())
         else:
             return ''
-    
+
     def results(self):
-        """ Get the actual result brains from the collection. 
+        """ Get the actual result brains from the collection.
             This is a wrapper so that we can memoize if and only if we aren't
             selecting random items."""
         results = []
@@ -167,7 +171,7 @@ class Renderer(CollectionRenderer):
     @memoize
     def collection(self, collection_path=None):
         """ get the collection the portlet is pointing to"""
-        
+
         if collection_path is None:
             collection_path = self.data.target_collection
         if not collection_path:
@@ -175,7 +179,7 @@ class Renderer(CollectionRenderer):
 
         if collection_path.startswith('/'):
             collection_path = collection_path[1:]
-        
+
         if not collection_path:
             return None
 
