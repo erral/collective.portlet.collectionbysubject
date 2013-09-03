@@ -180,7 +180,7 @@ class Renderer(CollectionRenderer):
                                     SUBJECT_TO_INDEX[self.data.group_by] + \
                                     '=' + subject,
                         number  = len(items)))
-        return results
+        return sorted(results, lambda x,y:cmp(x['title'].lower(), y['title'].lower()))
 
     @memoize
     def collection(self, collection_path=None):
