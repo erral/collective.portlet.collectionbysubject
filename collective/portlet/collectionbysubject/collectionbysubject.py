@@ -151,7 +151,7 @@ class Renderer(CollectionRenderer):
         results = []
         collection = self.collection(self.data.target_collection)
         if collection is not None:
-            if self.count_all_items:
+            if self.data.count_all_items:
                 # Hack, big hack. But how can you query 'all' items?
                 results = collection.queryCatalog(b_size=99999999999999999999)
             else:
@@ -176,7 +176,8 @@ class Renderer(CollectionRenderer):
                                     SUBJECT_TO_INDEX[self.data.group_by] + \
                                     '=' + subject,
                         number  = len(items)))
-        return sorted(results, lambda x,y:cmp(x['title'].lower(), y['title'].lower()))
+        results.sort(lambda x, y: cmp(x['title'].lower(), y['title'].lower()))
+        return results
 
     @memoize
     def collection(self, collection_path=None):
