@@ -64,6 +64,13 @@ class ICollectionBySubject(IPortletDataProvider):
         required=True,
         values = SUBJECT_TO_INDEX.keys(),)
 
+
+    count_all_items = schema.Bool(
+        title=_(u'Do not use the item count limit set on the collection'),
+        default=False,
+        required=False,
+    )
+
     cache_duration = schema.TextLine(
         title=_(u"Cache duration"),
         description=_(u"How long do you want portlet results to be cached (in minutes)?."),
@@ -82,13 +89,16 @@ class Assignment(base.Assignment):
     header = u""
     target_collection=None
     group_by=u"Keywords"
+    count_all_items = False
 
     def __init__(self, header=u"", target_collection=None,
-                    group_by=u"Keywords", cache_duration=u"60"):
+                    group_by=u"Keywords", cache_duration=u"60",
+                    count_all_items=False):
         self.header = header
         self.target_collection = target_collection
         self.group_by = group_by
         self.cache_duration = cache_duration
+        self.count_all_items = count_all_items
 
     @property
     def title(self):
@@ -145,7 +155,11 @@ class Renderer(CollectionRenderer):
         results = []
         collection = self.collection(self.data.target_collection)
         if collection is not None:
-            results = collection.queryCatalog({})
+            if self.count_all_items:
+                # Hack, big hack. But how can you query 'all' items?
+                results = collection.queryCatalog(b_size=99999999999999999999)
+            else:
+                results = collection.queryCatalog({})
             if results:
                 grouped_results = {}
                 for item in results:
